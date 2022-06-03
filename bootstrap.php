@@ -8,6 +8,10 @@ require_once dirname(__FILE__) . '/Core/Runner.php';
 require_once dirname(__FILE__) . '/Core/ORM.php';
 require_once dirname(__FILE__) . '/Core/Model.php';
 require_once dirname(__FILE__) . '/Core/App.php';
+
+require_once dirname(__FILE__) . '/Models/Accounts.php';
+require_once dirname(__FILE__) . '/Services/Accounts.php';
+
 require_once dirname(__FILE__) . '/Api/Server.php';
 
 \Core\App::init();

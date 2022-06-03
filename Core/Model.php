@@ -1,7 +1,6 @@
 <?php
 
     namespace Core;
-    use \Core\ORM;
 
     /**
      * Model Core
@@ -29,5 +28,33 @@
          */
         public function getData() {
 
+        }
+
+        /**
+         * Add data to model
+         */
+        public function addData($data) {
+
+        }
+
+        /**
+         * Save data to table
+         */
+        public function save() {
+            $reflect = new \ReflectionClass(__CLASS__);
+            $props = $reflect->getProperties(ReflectionProperty::IS_PUBLIC);
+            
+            $data = [];
+            foreach ($props as $prop) {
+                $data[$prop->getName()] = $this->{$prop->getName()};
+            }
+            $this->write($data);
+        }
+
+        /**
+         * Retrieve a row by its primary key value
+         */
+        public function find($key) {
+            return $this->read($key);
         }
     }

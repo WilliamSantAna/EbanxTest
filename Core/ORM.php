@@ -9,51 +9,113 @@ class ORM {
     private $schemaFile;
 
     public function __construct() {
-        $this->schemaFile = dirname(__FILE__) . DIRECTORY_SEPARATOR . $_SERVER['schemaFile'];
+        $this->schemaFile = $_SERVER['ROOT_PATH'] . DIRECTORY_SEPARATOR . $_SERVER['APP_CONFIG']->schemaFile;
     }
 
     /**
      * Load datafile schema data
      */
     private function getSchemaData() {
-        return json_decode(file_get_contens($this->schemaFile), true);
+        try {
+            $data = file_get_contents($this->schemaFile);
+            return json_decode($data, true);
+        }
+        catch (\Exception $e) {
+            # For some reason it didnt work
+            # @TODO A logger must be implemented here
+            # We are rethrowing this out because next methods may treat it
+            throw $e;
+        }
     }
 
     /**
-     * Truncate a table
+     * Truncate a table in datafile
      */
-    public function truncate() {
-        $this->write(null);
+    protected function truncate() {
+        try {
+            $schemaData = $this->getSchemaData();
+            $table = $this->getTable();
+            $schemaData[$table] = [];
+            file_put_contents($this->schemaFile, json_encode($schemaData));
+            return true;
+        }
+        catch (\Exception $e) {
+            # For some reason it didnt work
+            # @TODO A logger must be implemented here
+            return false;
+        }
+    }
+
+    /**
+     * Finds a row by its pk value
+     */
+    protected function read($key) {
+        try {
+            $schemaData = $this->getSchemaData();
+            $table = $this->getTable();
+            $pk = $this->getPk();
+            foreach ($schemaData[$table] as $idx => $row) {
+                if ($row[$pk] == $key) {
+                    return ['idx' => $idx, 'data' => $row];
+                }
+            }
+            return ['idx' => null, 'data' => null];
+        }
+        catch (\Exception $e) {
+            # For some reason it didnt work
+            # @TODO A logger must be implemented here
+            return false;
+        }
     }
 
     /**
      * Persists a row in datafile
      */
-    private function write(\Core\Model $model) {
-        $schemaData = $this->getSchemaData();
-        $table = $model->getTable();
-        $pk = $model->getPk();
+    protected function write($data) {
+        try {
+            $schemaData = $this->getSchemaData();       
+            $table = $this->getTable();
+            $pk = $this->getPk();
+            $key = $schemaData[$table][$pk];
+            $res = $this->read($key);
         
-        $data = $model->getData();
-        if ($data !== null) {
-            if (isset($schemaData[$table][$pk])) {
-                // Updates a row
-                $schemaData[$table] = $data;
+            if (isset($res['idx'])) {
+                // Updates a row due its table row exists
+                $schemaData[$table][$res['idx']] = $data;
             }
             else {
-                // Inserts a row
-                $schemaData[$table] = $data;
+                // Inserts a row in the end of table
+                $schemaData[$table][] = $data;
             }
+    
+            file_put_contents($this->schemaFile, $schemaData);
+            return true;
         }
-        else {
-            // Remove a row
-            unset($schemaData[$table]);
+        catch (\Exception $e) {
+            # For some reason it didnt work
+            # @TODO A logger must be implemented here
+            return false;
         }
-
-        file_put_contents($this->schemaFile, $schemaData);
     }
 
-    private function read() {
-
+    /**
+     * Remove a row from datafile
+     */
+    protected function delete($key) {
+        try {
+            $schemaData = $this->getSchemaData();
+            $table = $this->getTable();
+            $res = $this->read($key);
+            if (isset($res['idx'])) {
+                unset($schemaData[$table][$res['idx']]);
+            }
+            file_put_contents($this->schemaFile, $schemaData);
+            return true;
+        }
+        catch (\Exception $e) {
+            # For some reason it didnt work
+            # @TODO A logger must be implemented here
+            return false;
+        }
     }
 }

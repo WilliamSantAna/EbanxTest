@@ -14,18 +14,18 @@ class Runner {
         $method = $pieces[count($pieces)-1];
 
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-            $data = null;
+            $payload = null;
             if (strpos($method, '?')) {
                 # we have get query string data
-                $exp = explode("?", $method);
-                list($method, $data) = explode("?", $method);
+                list($method, $query_string) = explode("?", $method);
+                parse_str($query_string, $payload);
             }
         }
         else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $data = json_decode(file_get_contents('php://input'), true);
+            $payload = json_decode(file_get_contents('php://input'), true);
         }
 
-        return call_user_func(["\\Api\\Server", $method], $data);
+        return call_user_func(["\\Api\\Server", $method], $payload);
     }
 
 }
