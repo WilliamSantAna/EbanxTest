@@ -1,0 +1,4 @@
+AddHandler application/x-httpd-ea-php70___lsphp .php .php7 .phtml
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ bootstrap.php?path=$1 [NC]
