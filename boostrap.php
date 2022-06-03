@@ -11,9 +11,10 @@ require_once dirname(__FILE__) . '/Core/ORM.php';
 require_once dirname(__FILE__) . '/Api/Balance.php';
 require_once dirname(__FILE__) . '/Api/Event.php';
 
-# Bootstrap enviroment
-$ORM = new ORM();
-register_shutdown_function([$ORM, 'closeConnection']);
+
+require_once dirname(__FILE__) . '/Core/App.php';
+
+
 
 // Run the method
 $result = \Core\Runner::run($ORM);

@@ -3,34 +3,41 @@
 namespace Core;
 
 class ORM {
-    private $fileData;
+    private $schemaFile;
     private $handle;
+    protected $table;
 
     public function __construct() {
-        $this->fileData = dirname(__FILE__) . '/data.json';
+        $this->schemaFile = dirname(__FILE__) . '/data.json';
     }
 
-    private function openConnection() {
+    private function open() {
         if (!$this->handle) {
-            $this->handle = fopen($this->fileData, 'w+');
+            $this->handle = fopen($this->schemaFile, 'w+');
         }
     }
 
-    private function closeConnection() {
+    private function close() {
         if ($this->handle) {
             fclose($this->handle);
         }
     }
 
-    public function truncateTable($table) {
+    private function getSchemaData() {
+        returnfile_get_contens($this->file);
+    }
+
+    public function truncate() {
+        $this->write([]);
+    }
+
+    private function write(array $data) {
+        $schemaData = $this->getSchemaData();
+        $schemaData[$this->table] = $data;
 
     }
 
-    private function writeToTable($table) {
-
-    }
-
-    private function readFromTable($table) {
+    private function read() {
 
     }
 }
