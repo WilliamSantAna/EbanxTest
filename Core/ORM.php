@@ -2,39 +2,55 @@
 
 namespace Core;
 
+/**
+ * ORM Core
+ */
 class ORM {
     private $schemaFile;
-    private $handle;
-    protected $table;
 
     public function __construct() {
-        $this->schemaFile = dirname(__FILE__) . '/data.json';
+        $this->schemaFile = dirname(__FILE__) . DIRECTORY_SEPARATOR . $_SERVER['schemaFile'];
     }
 
-    private function open() {
-        if (!$this->handle) {
-            $this->handle = fopen($this->schemaFile, 'w+');
-        }
-    }
-
-    private function close() {
-        if ($this->handle) {
-            fclose($this->handle);
-        }
-    }
-
+    /**
+     * Load datafile schema data
+     */
     private function getSchemaData() {
-        returnfile_get_contens($this->file);
+        return json_decode(file_get_contens($this->schemaFile), true);
     }
 
+    /**
+     * Truncate a table
+     */
     public function truncate() {
-        $this->write([]);
+        $this->write(null);
     }
 
-    private function write(array $data) {
+    /**
+     * Persists a row in datafile
+     */
+    private function write(\Core\Model $model) {
         $schemaData = $this->getSchemaData();
-        $schemaData[$this->table] = $data;
+        $table = $model->getTable();
+        $pk = $model->getPk();
+        
+        $data = $model->getData();
+        if ($data !== null) {
+            if (isset($schemaData[$table][$pk])) {
+                // Updates a row
+                $schemaData[$table] = $data;
+            }
+            else {
+                // Inserts a row
+                $schemaData[$table] = $data;
+            }
+        }
+        else {
+            // Remove a row
+            unset($schemaData[$table]);
+        }
 
+        file_put_contents($this->schemaFile, $schemaData);
     }
 
     private function read() {

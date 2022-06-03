@@ -4,29 +4,28 @@ namespace Core;
 
 class Runner {
 
-    static function run($ORM) {
-        if ($_REQUEST['REQUEST_METHOD'] == 'GET') {
-            $url = $_SERVER['REQUEST_URI'];
-            $pieces = explode("/", substr($url, 0, -1));
-            $method = $pieces[count($pieces)-1];
-    
-            $post = json_decode(file_get_contents('php://input'), true);
-            return call_user_func(["\\Api\\Server", $method], $ORM, $post['data']);
+    static function run() {
+        # Parsing called api method
+        $url = $_SERVER['REQUEST_URI']; 
+        if (substr($url, -1) == '/') {
+            $url = substr($url, 0, -1);
         }
-        else if ($_REQUEST['REQUEST_METHOD'] == 'POST') {
-            $url = $_SERVER['REQUEST_URI'];
-            $pieces = explode("/", substr($url, 0, -1));
-            $method = $pieces[count($pieces)-1];
-    
-            $post = json_decode(file_get_contents('php://input'), true);
-            return call_user_func(["\\Api\\Server", $method], $ORM, $post['data']);
+        $pieces = explode("/", $url); 
+        $method = $pieces[count($pieces)-1];
+
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+            $data = null;
+            if (strpos($method, '?')) {
+                # we have get query string data
+                $exp = explode("?", $method);
+                list($method, $data) = explode("?", $method);
+            }
         }
-        else {
-            return [
-                'code' => 405,
-                'body' => null
-            ];
+        else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $data = json_decode(file_get_contents('php://input'), true);
         }
+
+        return call_user_func(["\\Api\\Server", $method], $data);
     }
 
 }

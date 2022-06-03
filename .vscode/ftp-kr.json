@@ -1,0 +1,17 @@
+{
+    "host": "ftp.everestim.com.br",
+    "username": "ebanxtest.williamsantana@ebanxtest.williamsantana.everestim.com.br",
+    "password": "8823Will",
+    "remotePath": "/",
+    "protocol": "ftp",
+    "port": 21,
+    "fileNameEncoding": "utf8",
+    "autoUpload": true,
+    "autoDelete": true, 
+    "autoDownload": false,
+    "ignore": [
+        ".git",
+        "/.vscode"
+    ],
+    "ignoreRemoteModification": true
+}

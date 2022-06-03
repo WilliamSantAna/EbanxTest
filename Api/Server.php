@@ -3,16 +3,17 @@
     namespace Api;
 
     class Server {
-        public function reset($ORM, $post) {
+        static function reset() {
             // Clear Accounts table data
-            
+            $account = new \Model\Account();
+            $account->truncate();
         }
 
-        public function event($ORM, $post) {
+        static function event($post) {
 
         }
 
-        public function balance($ORM, $post) {
+        static function balance($post) {
 
         }
     }

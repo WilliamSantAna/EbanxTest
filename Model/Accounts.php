@@ -1,8 +1,7 @@
 <?php
 
 namespace Model;
-use \Core\ORM;
-
+use \Core\Model;
 
 class Accounts extends ORM {
     public $id;
@@ -11,6 +10,7 @@ class Accounts extends ORM {
     public function __construct() {
         parent::__construct();
         $this->table = __CLASS__;
+        $this->pk = 'id';
     }
 
 }
