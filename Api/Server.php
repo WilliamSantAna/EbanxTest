@@ -14,15 +14,22 @@
         static function event($payload) {
             switch ($payload['type']) {
                 case 'deposit': {
-                    $result = \Services\Accounts::deposit($id, $amount);
+                    $destination = $payload['destination'];
+                    $amount = $payload['amount'];
+                    $result = \Services\Accounts::deposit($destination, $amount);
                     break;
                 }
                 case 'withdraw': {
-                    $result = \Services\Accounts::withdraw($id, $amount);
+                    $origin = $payload['origin'];
+                    $amount = $payload['amount'];
+                    $result = \Services\Accounts::withdraw($origin, $amount);
                     break;
                 }
                 case 'transfer': {
-                    $result = \Services\Accounts::transfer($id, $amount);
+                    $origin = $payload['origin'];
+                    $destination = $payload['destination'];
+                    $amount = $payload['amount'];
+                    $result = \Services\Accounts::transfer($origin, $destination, $amount);
                     break;
                 }
                 default: {

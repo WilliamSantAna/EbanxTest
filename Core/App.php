@@ -16,10 +16,11 @@
             $result = \Core\Runner::run();
 
             // Output result
-            http_response_code($result['code']);
-
-            if (!empty($result['body'])) {
-                echo json_encode($result['body']);
-            }
+            $code = $result['code'];
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            $headerOut = $protocol . ' ' . $code . (!empty($result['body']) ? ' ' . $result['body'] : '');
+            header($headerOut);
+            http_response_code($code);
+            echo $result['body'];
         }
     }

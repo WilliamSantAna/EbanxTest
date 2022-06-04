@@ -29,24 +29,6 @@ class ORM {
     }
 
     /**
-     * Truncate a table in datafile
-     */
-    protected function truncate() {
-        try {
-            $schemaData = $this->getSchemaData();
-            $table = $this->getTable();
-            $schemaData[$table] = [];
-            file_put_contents($this->schemaFile, json_encode($schemaData));
-            return true;
-        }
-        catch (\Exception $e) {
-            # For some reason it didnt work
-            # @TODO A logger must be implemented here
-            return false;
-        }
-    }
-
-    /**
      * Finds a row by its pk value
      */
     protected function read($key) {
@@ -76,11 +58,13 @@ class ORM {
             $schemaData = $this->getSchemaData();       
             $table = $this->getTable();
             $pk = $this->getPk();
-            $key = $schemaData[$table][$pk];
+            $key = $data[$pk];
             $res = $this->read($key);
-        
-            if (isset($res['idx'])) {
+            //echo 'print_r($res): ' . print_r($res, 1);
+
+            if ($res['idx'] !== null) {
                 // Updates a row due its table row exists
+                //echo '$res[idx]: ' . $res['idx'];
                 $schemaData[$table][$res['idx']] = $data;
             }
             else {
@@ -88,7 +72,7 @@ class ORM {
                 $schemaData[$table][] = $data;
             }
     
-            file_put_contents($this->schemaFile, $schemaData);
+            file_put_contents($this->schemaFile, json_encode($schemaData));
             return true;
         }
         catch (\Exception $e) {
@@ -106,10 +90,10 @@ class ORM {
             $schemaData = $this->getSchemaData();
             $table = $this->getTable();
             $res = $this->read($key);
-            if (isset($res['idx'])) {
+            if ($res['idx'] !== null) {
                 unset($schemaData[$table][$res['idx']]);
             }
-            file_put_contents($this->schemaFile, $schemaData);
+            file_put_contents($this->schemaFile, json_encode($schemaData));
             return true;
         }
         catch (\Exception $e) {
@@ -118,4 +102,23 @@ class ORM {
             return false;
         }
     }
+
+        /**
+     * Truncate a table in datafile
+     */
+    protected function truncate() {
+        try {
+            $schemaData = $this->getSchemaData();
+            $table = $this->getTable();
+            $schemaData[$table] = [];
+            file_put_contents($this->schemaFile, json_encode($schemaData));
+            return true;
+        }
+        catch (\Exception $e) {
+            # For some reason it didnt work
+            # @TODO A logger must be implemented here
+            return false;
+        }
+    }
+
 }

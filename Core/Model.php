@@ -7,13 +7,14 @@
      */
     class Model extends ORM {
         protected $table;
+        protected $class;
         protected $pk;
 
         /**
          * Returns table name
          */
         protected function getTable() {
-            return $this->table;
+            return substr($this->class, strrpos($this->class, '\\') + 1);
         }
 
         /**
@@ -27,28 +28,31 @@
          * Returns all public prop data
          */
         public function getData() {
+            $reflect = new \ReflectionClass($this->class);
+            $props = $reflect->getProperties(\ReflectionProperty::IS_PUBLIC);
 
+            $data = [];
+            foreach ($props as $prop) {
+                $data[$prop->getName()] = $this->{$prop->getName()};
+            }
+
+            return $data;
         }
 
         /**
          * Add data to model
          */
         public function addData($data) {
-
+            foreach ($data as $key => $value) {
+                $this->{$key} = $value;
+            }
         }
 
         /**
          * Save data to table
          */
         public function save() {
-            $reflect = new \ReflectionClass(__CLASS__);
-            $props = $reflect->getProperties(ReflectionProperty::IS_PUBLIC);
-            
-            $data = [];
-            foreach ($props as $prop) {
-                $data[$prop->getName()] = $this->{$prop->getName()};
-            }
-            $this->write($data);
+            return $this->write($this->getData());
         }
 
         /**
@@ -56,5 +60,12 @@
          */
         public function find($key) {
             return $this->read($key);
+        }
+
+        /**
+         * Delete ALL rows in the table
+         */
+        public function deleteAll() {
+            return $this->truncate();
         }
     }
