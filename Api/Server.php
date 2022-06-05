@@ -2,6 +2,9 @@
     
     namespace Api;
 
+    /**
+     * class Server
+     */
     class Server {
 
         /**
@@ -11,6 +14,9 @@
             return \Services\Accounts::closeAll();
         }
 
+        /**
+         * Returns a call to an event (deposit, withdraw, transfer)
+         */
         static function event($payload) {
             switch ($payload['type']) {
                 case 'deposit': {
@@ -40,9 +46,11 @@
             return $result;
         }
 
+        /**
+         * Returns the balance of an account (if it exists, of course)
+         */
         static function balance($payload) {
             $accountId = $payload['account_id'];
-            $res = \Services\Accounts::getBalance($accountId);
-            return $res;
+            return \Services\Accounts::getBalance($accountId);
         }
     }

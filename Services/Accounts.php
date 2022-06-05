@@ -2,6 +2,9 @@
 
 namespace Services;
 
+/**
+ * Accounts Service class 
+ */
 class Accounts {
     
     /**

@@ -2,8 +2,14 @@
 
 namespace Core;
 
+/**
+ * Runner class
+ */
 class Runner {
 
+    /**
+     * Runs the App
+     */
     static function run() {
         # Parsing called api method
         $url = $_SERVER['REQUEST_URI']; 
@@ -22,6 +28,7 @@ class Runner {
             }
         }
         else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            # we have the raw body post
             $payload = json_decode(file_get_contents('php://input'), true);
         }
 

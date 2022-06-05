@@ -2,8 +2,14 @@
 
     namespace Core;
 
+    /**
+     * 
+     */
     class App {
 
+        /**
+         * Boot the App
+         */
         static function init() {
             # Set root path
             $_SERVER['ROOT_PATH'] = dirname(__FILE__) . '/../';

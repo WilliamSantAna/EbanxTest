@@ -3,7 +3,7 @@
     namespace Core;
 
     /**
-     * Model Core
+     * Core Model 
      */
     class Model extends ORM {
         protected $table;

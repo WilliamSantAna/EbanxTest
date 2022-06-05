@@ -3,6 +3,9 @@
 namespace Models;
 use \Core\Model;
 
+/**
+ * Accounts Model
+ */
 class Accounts extends Model {
     public $id;
     public $amount;

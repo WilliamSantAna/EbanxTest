@@ -1,6 +1,7 @@
 <?php
 
 namespace Core;
+use Core\Exceptions;
 
 /**
  * ORM Core
@@ -8,6 +9,9 @@ namespace Core;
 class ORM {
     private $schemaFile;
 
+    /**
+     * Define que datafile, which will 'persists' the app's data
+     */
     public function __construct() {
         $this->schemaFile = $_SERVER['ROOT_PATH'] . DIRECTORY_SEPARATOR . $_SERVER['APP_CONFIG']->schemaFile;
     }
@@ -24,12 +28,12 @@ class ORM {
             # For some reason it didnt work
             # @TODO A logger must be implemented here
             # We are rethrowing this out because next methods may treat it
-            throw $e;
+            throw new FileUnreadableException($e->getMessage());
         }
     }
 
     /**
-     * Finds a row by its pk value
+     * Reads a table row by its pk value
      */
     protected function read($key) {
         try {
